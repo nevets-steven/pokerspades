@@ -1,71 +1,85 @@
-import random as rnd
 
-cards = ('S2','S3','S4','S5','S6','S7','S8','S9','S10','SJ','SQ','SK','SA')
-card_values = (2,3,4,5,6,7,8,9,10,11,12,13,14)
-card_dict = {}
-for key, value in zip(cards, card_values):
-    card_dict[key] = value
+card_dict = {'S2': 2,
+             'S3': 3,
+             'S4': 4,
+             'S5': 5,
+             'S6': 6,
+             'S7': 7,
+             'S8': 8,
+             'S9': 9,
+             'S10': 10,
+             'SJ': 11,
+             'SQ': 12,
+             'SK': 13,
+             'SA': 14}
+
 
 
 
 def check_straight(card1, card2, card3):
-    card_list = [card1, card2, card3]
+    card_list = [card_dict[card1], card_dict[card2], card_dict[card3]]
     card_list.sort()
-    if card_list[-1] - card_list[0] == 2:
+    if card_list[-1] - card_list[0] == 2 and card_list[-1] - card_list[1] == 1:
         return 7
     else:
         return 0
 
-# print(check_straight(card_dict['S5'], card_dict['S6'], card_dict['S7']))
-# print(check_straight(card_dict['SA'], card_dict['SK'], card_dict['SQ']))
-# print(check_straight(card_dict['S2'], card_dict['S3'], card_dict['S6']))
+# print(check_straight('S5', 'S6', 'S7'))
+# print(check_straight('S7', 'S6', 'S5'))
+# print(check_straight('S5', 'S5', 'S7'))
+# print(check_straight('S7', 'S5', 'S7'))
+# print(check_straight('S5', 'S7', 'S9'))
+# print(check_straight('S5', 'S7', 'S9'))
+
 def check_3ofa_kind(card1, card2, card3):
-    card_list = [card1, card2, card3]
+    card_list = [card_dict[card1], card_dict[card2], card_dict[card3]]
     card_list.sort()
     if card_list[0] == card_list[1] == card_list[2]:
         return 9
     else:
         return 0
-# print(check_3ofa_kind(card_dict['S2'], card_dict['S2'], card_dict['S2']))
-# print(check_3ofa_kind(card_dict['S2'], card_dict['S2'], card_dict['S3']))
+# print(check_3ofa_kind('S2', 'S2', 'S2'))
+# print(check_3ofa_kind('S2', 'S3', 'S2'))
+# print(check_3ofa_kind('S2', 'S2', 'S3'))
+# print(check_3ofa_kind('SJ', 'SJ', 'SQ'))
+
 def check_royal_flush(card1, card2, card3):
-    if check_straight(card1, card2, card3):
-        card_list = [card1, card2, card3]
-        card_list.sort()
-        if card_list[2] == 14:
-            return 14
-        else:
-            return 0
+    if check_straight(card1, card2, card3) and card_dict[card3] == 14:
+        return 14
     else:
         return 0
+# print(check_royal_flush('SQ', 'SK', 'SA'))
+# print(check_royal_flush('SQ', 'SA', 'SK'))
+# print(check_royal_flush('SJ', 'SQ', 'SK'))
+# print(check_royal_flush('SQ', 'SQ', "SQ"))
 
-# print(check_royal_flush(card_dict['SQ'], card_dict['SK'], card_dict['SA']))
-# print(check_royal_flush(card_dict['S9'], card_dict['SK'], card_dict['SA']))
 def play_cards(left1, left2, left3, right1, right2, right3):
     left_player = [check_straight(left1,left2,left3), check_3ofa_kind(left1,left2,left3), check_royal_flush(left1,left2,left3)]
     right_player = [check_straight(right1,right2,right3), check_3ofa_kind(right1,right2,right3), check_royal_flush(right1,right2,right3)]
-    for left_hand in left_player:
-        for right_hand in right_player:
-            if left_hand == right_hand and right_hand != 0:
-                left_list = [left1, left2, left3]
-                right_list = [right1, right2, right3]
-                left_list.sort()
-                right_list.sort()
-                if left_list[2] == right_list[2]:
-                    return 0
-                elif left_list[2] > right_list[2]:
-                    return -1
-                else:
-                    return 1
-            elif left_hand > right_hand:
-                return -1
-            elif left_hand == 0 and right_hand == 0:
-                return 0
-            else:
-                return 1
+    left_player.sort(reverse=True), right_player.sort(reverse=True)
+    if left_player[0] == right_player[0]:
+        left_list = [left1, left2, left3]
+        right_list = [right1, right2, right3]
+        left_list.sort(), right_list.sort()
+        if left_list[0] == right_list[0]:
+            return 0
+        elif left_list[0] > right_list[0]:
+            return -1
+        elif left_list[0] < right_list[0]:
+            return 1
+        else:
+            return ValueError
+    elif left_player[0] > right_player[0]:
+        return -1
+    elif left_player[0] > right_player[0]:
+        return 1
+    else:
+        return ValueError
 
 
-# print(play_cards(card_dict['SQ'],card_dict['SJ'], card_dict['S10']
-#                  , card_dict['S2'], card_dict['S2'], card_dict['S3']))
+
+# print(play_cards('SQ','SJ', 'S10', 'S2', 'S2', 'S3'))
+# print(play_cards('SQ','SJ', 'S10', 'SQ','SJ', 'S10'))
+
 
 
