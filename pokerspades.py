@@ -19,8 +19,8 @@ card_dict = {'S2': 2,
 def check_straight(card1, card2, card3):
     card_list = [card_dict[card1], card_dict[card2], card_dict[card3]]
     card_list.sort()
-    if card_list[-1] - card_list[0] == 2 and card_list[-1] - card_list[1] == 1:
-        return 7
+    if card_list[0] + 1 == card_list[1] and card_list[1] + 1 == card_list[2]:
+        return card_list[2]
     else:
         return 0
 
@@ -33,9 +33,8 @@ def check_straight(card1, card2, card3):
 
 def check_3ofa_kind(card1, card2, card3):
     card_list = [card_dict[card1], card_dict[card2], card_dict[card3]]
-    card_list.sort()
     if card_list[0] == card_list[1] == card_list[2]:
-        return 9
+        return card_list[0]
     else:
         return 0
 # print(check_3ofa_kind('S2', 'S2', 'S2'))
@@ -44,7 +43,8 @@ def check_3ofa_kind(card1, card2, card3):
 # print(check_3ofa_kind('SJ', 'SJ', 'SQ'))
 
 def check_royal_flush(card1, card2, card3):
-    if check_straight(card1, card2, card3) and card_dict[card3] == 14:
+    card_list = [card_dict[card1], card_dict[card2], card_dict[card3]]
+    if check_straight(card1, card2, card3) and 14 in card_list:
         return 14
     else:
         return 0
@@ -54,29 +54,32 @@ def check_royal_flush(card1, card2, card3):
 # print(check_royal_flush('SQ', 'SQ', "SQ"))
 
 def play_cards(left1, left2, left3, right1, right2, right3):
-    left_player = [check_straight(left1,left2,left3), check_3ofa_kind(left1,left2,left3), check_royal_flush(left1,left2,left3)]
-    right_player = [check_straight(right1,right2,right3), check_3ofa_kind(right1,right2,right3), check_royal_flush(right1,right2,right3)]
-    left_player.sort(reverse=True), right_player.sort(reverse=True)
-    if left_player[0] == right_player[0]:
-        left_list = [left1, left2, left3]
-        right_list = [right1, right2, right3]
-        left_list.sort(), right_list.sort()
-        if left_list[0] == right_list[0]:
-            return 0
-        elif left_list[0] > right_list[0]:
+    left_str = check_straight(left1, left2, left3)
+    left_3kind = check_3ofa_kind(left1, left2, left3)
+    left_royal = check_royal_flush(left1, left2, left3)
+    right_str = check_straight(right1, right2, right3)
+    right_3kind = check_3ofa_kind(right1, right2, right3)
+    right_royal = check_royal_flush(right1, right2, right3)
+
+    if left_royal == 14 and right_royal == 0:
+        return -1
+    if right_royal == 14 and left_royal == 0:
+        return 1
+    if left_3kind > 0 and right_3kind > 0:
+        if right_3kind > right_3kind:
             return -1
-        elif left_list[0] < right_list[0]:
+        elif left_3kind < right_3kind:
             return 1
         else:
-            return ValueError
-    elif left_player[0] > right_player[0]:
+            return 0
+    if left_str > 0 and right_3kind > 0:
         return -1
-    elif left_player[0] > right_player[0]:
+    if right_str > 0 and left_3kind > 0:
         return 1
-    else:
-        return ValueError
 
+    # all else game ends in draw
 
+    return 0
 
 # print(play_cards('SQ','SJ', 'S10', 'S2', 'S2', 'S3'))
 # print(play_cards('SQ','SJ', 'S10', 'SQ','SJ', 'S10'))
